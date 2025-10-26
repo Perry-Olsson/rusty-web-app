@@ -44,7 +44,13 @@ fn watch(path: String, has_changed: Arc<Mutex<bool>>) -> Result<(), Box<dyn Erro
             Ok(event) => {
                 for path in event.paths.as_slice() {
                     if path.ends_with(file_name) {
-                        *has_changed.lock().unwrap() = true;
+                        match event.kind {
+                            notify::EventKind::Create(_) |
+                            notify::EventKind::Modify(_) => {
+                                *has_changed.lock().unwrap() = true;
+                            },
+                            _ => {}
+                        }
                     }
                 }
             },
