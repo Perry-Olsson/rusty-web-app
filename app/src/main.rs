@@ -1,5 +1,7 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
+const PORT: u16 = 8080;
+
 #[get("/")]
 async fn hello() -> impl Responder {
     HttpResponse::Ok().body("hello world!")
@@ -16,13 +18,14 @@ async fn manual_hello() -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+    let server = HttpServer::new(|| {
         App::new()
             .service(hello)
             .service(echo)
             .route("/hey", web::get().to(manual_hello))
     })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    .bind(("127.0.0.1", PORT))?
+    .run();
+    println!("Server listening on port {}", PORT);
+    server.await
 }
