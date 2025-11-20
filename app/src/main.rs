@@ -4,7 +4,7 @@ const PORT: u16 = 8080;
 
 #[get("/")]
 async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("hello world!")
+    HttpResponse::Ok().body("hello world!!!!!")
 }
 
 #[post("/echo")]

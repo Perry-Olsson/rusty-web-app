@@ -30,11 +30,9 @@ fn run() -> Result<(), Box<dyn Error>> {
 }
 
 fn watch(path: String, has_changed: Arc<Mutex<bool>>) -> Result<(), Box<dyn Error>> {
-    // Create a channel to receive filesystem events
     let (tx, rx) = channel();
 
     let mut watcher = notify::recommended_watcher(tx)?;
-    // Watch the specific file (non-recursive, so only the file is monitored)
     let path_to_watch = Path::new(path.as_str());
     let file_name = path_to_watch.file_name().unwrap();
     watcher.watch(path_to_watch.parent().unwrap(), RecursiveMode::NonRecursive)?;
