@@ -1,0 +1,9 @@
+.git/
+.gitignore
+.env
+*.log
+tmp/
+
+# Exclude all markdown files except README.md
+*.md
+!README.md
