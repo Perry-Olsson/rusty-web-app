@@ -1,0 +1,15 @@
+services:
+  reddit-clone:
+    build:
+      context: .
+      target: dev
+      args:
+        APP_NAME: reddit-clone
+    image: reddit-clone
+    container_name: reddit-clone
+    volumes:
+      - .:/reddit-clone
+    ports:
+      - "8080:8080"
+    stdin_open: true
+    tty: true
