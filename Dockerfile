@@ -1,10 +1,8 @@
-FROM rust:1.91.1-alpine3.20 as builder
-WORKDIR /reddit-clone
+FROM rust:1.91.1 AS builder
 
-COPY . .
+ARG APP_NAME
+FROM builder AS dev
 
-RUN cargo install --path .
+WORKDIR /${APP_NAME}
 
-CMD ["ls"]
-
-
+CMD ["scripts/run.sh"]

@@ -4,7 +4,7 @@ const PORT: u16 = 8080;
 
 #[get("/")]
 async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("hello world!!!!!")
+    HttpResponse::Ok().body("hello world")
 }
 
 #[post("/echo")]
@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
             .service(echo)
             .route("/hey", web::get().to(manual_hello))
     })
-    .bind(("127.0.0.1", PORT))?
+    .bind(("0.0.0.0", PORT))?
     .run();
     println!("Server listening on port {}", PORT);
     server.await
