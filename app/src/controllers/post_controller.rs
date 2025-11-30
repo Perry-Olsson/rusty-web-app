@@ -1,4 +1,4 @@
-use actix_web::{get, post, web, Responder};
+use actix_web::{get, post, web, HttpResponse, Responder};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub struct Id {
@@ -70,16 +70,26 @@ fn _get_post(query: &GetPostQuery) -> Post {
 
 #[post("/post")]
 pub async fn create_post(post: web::Json<NewPost>) -> impl Responder {
-    let post = _create_post(post.into_inner());
-    web::Json(post)
+    match _create_post(post.into_inner()) {
+        Ok(post) => HttpResponse::Ok().json(post),
+        Err(err) => HttpResponse::BadRequest().body(err),
+    }
 }
 
-fn _create_post(new_post: NewPost) -> Post {
-    Post {
+fn _create_post(new_post: NewPost) -> Result<Post, String> {
+    if new_post.title.trim().is_empty() {
+        return Err("Title cannot be empty".to_string());
+    }
+
+    if new_post.content.trim().is_empty() {
+        return Err("Content cannot be empty".to_string());
+    }
+
+    Ok(Post {
         id: Id::new(),
         title: new_post.title,
-        content: new_post.content
-    }
+        content: new_post.content,
+    })
 }
 
 #[cfg(test)]
