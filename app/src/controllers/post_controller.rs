@@ -7,6 +7,12 @@ pub struct Post {
     pub content: String,
 }
 
+#[derive(Serialize, Deserialize)]
+struct NewPost {
+    pub title: String,
+    pub content: String,
+}
+
 #[derive(Deserialize)]
 pub struct GetPostQuery {
     upper: Option<bool>,
@@ -32,8 +38,16 @@ fn _get_post(query: &GetPostQuery) -> Post {
 }
 
 #[post("/post")]
-pub async fn create_post(post: web::Json<Post>) -> impl Responder {
-    web::Json(post.into_inner())
+pub async fn create_post(post: web::Json<NewPost>) -> impl Responder {
+    let post = _create_post(post.into_inner());
+    web::Json(post)
+}
+
+fn _create_post(new_post: NewPost) -> Post {
+    Post {
+        title: new_post.title,
+        content: new_post.content
+    }
 }
 
 #[cfg(test)]
