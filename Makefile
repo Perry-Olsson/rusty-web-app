@@ -7,7 +7,7 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 
 dev: ## Start the development environment
-	docker compose up -d
+	USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose up -d
 
 up: dev ## Alias for dev
 

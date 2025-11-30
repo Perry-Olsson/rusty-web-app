@@ -7,6 +7,7 @@ services:
         APP_NAME: reddit-clone
     image: reddit-clone
     container_name: reddit-clone
+    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
     volumes:
       - .:/reddit-clone
     ports:
