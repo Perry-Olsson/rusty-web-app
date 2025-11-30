@@ -1,7 +1,6 @@
 use actix_web::{get, post, web, Responder};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Serialize, Deserialize)]
 pub struct Id {
     val: u64
 }
@@ -9,6 +8,25 @@ pub struct Id {
 impl Id {
     fn new() -> Id {
         Id { val: 1 }
+    }
+}
+
+impl Serialize for Id {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_u64(self.val)
+    }
+}
+
+impl<'de> Deserialize<'de> for Id {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let val = u64::deserialize(deserializer)?;
+        Ok(Id { val })
     }
 }
 
