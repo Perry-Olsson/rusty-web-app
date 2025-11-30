@@ -1,8 +1,16 @@
+use std::fmt::Debug;
+
 use actix_web::{get, post, web, HttpResponse, Responder};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub struct Id {
     val: u64
+}
+
+impl Debug for Id {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.serialize_u64(self.val)
+    }
 }
 
 impl Id {
@@ -30,7 +38,7 @@ impl<'de> Deserialize<'de> for Id {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Post {
     pub id: Id,
     pub title: String,
@@ -121,5 +129,67 @@ mod tests {
 
         assert_eq!(post.title, "MY FIRST POST");
         assert_eq!(post.content, "This is some dummy content for the post.");
+    }
+
+    #[test]
+    fn test_create_post_valid() {
+        let new_post = NewPost {
+            title: "Test Post".to_string(),
+            content: "Test content".to_string(),
+        };
+        let result = _create_post(new_post);
+
+        assert!(result.is_ok());
+        let post = result.unwrap();
+        assert_eq!(post.title, "Test Post");
+        assert_eq!(post.content, "Test content");
+    }
+
+    #[test]
+    fn test_create_post_empty_title() {
+        let new_post = NewPost {
+            title: "".to_string(),
+            content: "Test content".to_string(),
+        };
+        let result = _create_post(new_post);
+
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), "Title cannot be empty");
+    }
+
+    #[test]
+    fn test_create_post_empty_content() {
+        let new_post = NewPost {
+            title: "Test Post".to_string(),
+            content: "".to_string(),
+        };
+        let result = _create_post(new_post);
+
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), "Content cannot be empty");
+    }
+
+    #[test]
+    fn test_create_post_whitespace_title() {
+        let new_post = NewPost {
+            title: "   ".to_string(),
+            content: "Test content".to_string(),
+        };
+        let result = _create_post(new_post);
+
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), "Title cannot be empty");
+    }
+
+    #[test]
+    fn test_create_post_whitespace_content() {
+        let new_post = NewPost {
+            title: "Test Post".to_string(),
+            content: "   ".to_string(),
+        };
+        let result = _create_post(new_post);
+
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), "Content cannot be empty");
     }
 }
