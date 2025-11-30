@@ -1,8 +1,20 @@
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{get, post, web, Responder};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+pub struct Id {
+    val: u64
+}
+
+impl Id {
+    fn new() -> Id {
+        Id { val: 1 }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct Post {
+    pub id: Id,
     pub title: String,
     pub content: String,
 }
@@ -26,6 +38,7 @@ pub async fn get_post(query: web::Query<GetPostQuery>) -> impl Responder {
 
 fn _get_post(query: &GetPostQuery) -> Post {
     let mut post = Post {
+        id: Id::new(),
         title: "My First Post".to_string(),
         content: "This is some dummy content for the post.".to_string(),
     };
@@ -45,6 +58,7 @@ pub async fn create_post(post: web::Json<NewPost>) -> impl Responder {
 
 fn _create_post(new_post: NewPost) -> Post {
     Post {
+        id: Id::new(),
         title: new_post.title,
         content: new_post.content
     }
