@@ -1,4 +1,5 @@
 mod controllers;
+mod models;
 
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 
