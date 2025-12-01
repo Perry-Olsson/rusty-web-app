@@ -2,8 +2,10 @@ use actix_web::{
     dev::Payload,
     http::header,
     FromRequest,
-    HttpRequest,
+    HttpRequest, HttpResponse, Responder,
 };
+use askama::Template;
+use serde::Serialize;
 use std::future::{ready, Ready};
 
 pub enum ResponseFmt {
@@ -22,5 +24,23 @@ impl FromRequest for ResponseFmt {
             _ => ResponseFmt::HTML,
         };
         ready(Ok(fmt))
+    }
+}
+
+pub fn send_response<T>(res: T, fmt: ResponseFmt) -> impl Responder 
+where T: Serialize + Template {
+    match fmt {
+        ResponseFmt::HTML => {
+            match res.render() {
+                Ok(html) => HttpResponse::Ok()
+                    .content_type("text/html; charset=utf-8")
+                    .body(html),
+                Err(err) => HttpResponse::InternalServerError()
+                    .body(format!("Template error: {}", err)),
+            }
+        },
+        ResponseFmt::JSON => {
+            HttpResponse::Ok().json(res)
+        },
     }
 }

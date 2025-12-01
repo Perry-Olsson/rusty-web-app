@@ -6,10 +6,9 @@ use actix_web::{
     Responder,
     Scope
 };
-use askama::Template;
 use crate::{
     service::post_service::{GetPostQuery, NewPost, PostService},
-    util::ResponseFmt
+    util::{send_response, ResponseFmt}
 };
 
 pub struct PostData {
@@ -33,20 +32,7 @@ pub async fn get_post(
 ) -> impl Responder {
     let post = services.service.get_post(&query);
 
-    match fmt {
-        ResponseFmt::HTML => {
-            match post.render() {
-                Ok(html) => HttpResponse::Ok()
-                    .content_type("text/html; charset=utf-8")
-                    .body(html),
-                Err(err) => HttpResponse::InternalServerError()
-                    .body(format!("Template error: {}", err)),
-            }
-        },
-        ResponseFmt::JSON => {
-            HttpResponse::Ok().json(post)
-        },
-    }
+    send_response(post, fmt)
 }
 
 #[post("")]
