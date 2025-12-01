@@ -8,7 +8,7 @@ pub struct PostData {
 }
 
 pub fn create() -> Scope {
-    let post_scope = web::scope("/post");
+    let post_scope = web::scope("/posts");
     post_scope.app_data(web::Data::new(PostData {
                 service: PostService::new()
             }))
