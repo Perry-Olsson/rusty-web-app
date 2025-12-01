@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub struct Id {
@@ -8,6 +8,12 @@ pub struct Id {
 impl Debug for Id {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.serialize_u64(self.val)
+    }
+}
+
+impl Display for Id {
+   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+       f.serialize_u64(self.val)
     }
 }
 
