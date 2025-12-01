@@ -17,11 +17,7 @@ FROM builder AS tester
 # Install cargo-nextest
 RUN cargo install cargo-nextest --locked
 
-# Run tests - if this fails, the build fails
-RUN cargo nextest run --release
-
-# Create a marker file to indicate tests passed
-RUN echo "tests passed" > /tmp/tests-passed
+# Tests will be run separately in CI via docker run
 
 # Runtime stage
 FROM debian:bookworm-slim AS runtime
@@ -32,9 +28,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
-# Copy the test marker to ensure tests ran (creates dependency on tester stage)
-COPY --from=tester /tmp/tests-passed /tmp/tests-passed
 
 # Copy the binary from builder stage
 COPY --from=builder /app/target/release/app /app/app

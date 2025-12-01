@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -15,11 +15,23 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and test Docker image
+      - name: Build tester image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: tester
+          load: true
+          tags: rusty-web-app:tester
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run tests
+        run: docker run --rm rusty-web-app:tester cargo nextest run --release
+
+      - name: Build final image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: false
           tags: rusty-web-app:latest
           cache-from: type=gha
-          cache-to: type=gha,mode=max
