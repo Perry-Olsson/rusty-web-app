@@ -1,6 +1,5 @@
 use actix_web::{
     get,
-    http::header::{Accept},
     post,
     web::{self},
     HttpResponse,
@@ -10,7 +9,7 @@ use actix_web::{
 use askama::Template;
 use crate::{
     service::post_service::{GetPostQuery, NewPost, PostService},
-    util::{get_fmt, ResponseFmt}
+    util::ResponseFmt
 };
 
 pub struct PostData {
@@ -30,11 +29,11 @@ pub fn create() -> Scope {
 pub async fn get_post(
     services: web::Data<PostData>,
     query: web::Query<GetPostQuery>,
-    accept: web::Header<Accept>
+    fmt: ResponseFmt,
 ) -> impl Responder {
     let post = services.service.get_post(&query);
 
-    match get_fmt(accept) {
+    match fmt {
         ResponseFmt::HTML => {
             match post.render() {
                 Ok(html) => HttpResponse::Ok()
