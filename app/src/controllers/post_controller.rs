@@ -1,18 +1,17 @@
 use actix_web::{
     get,
-    http::header::Accept,
+    http::header::{Accept},
     post,
     web::{self},
     HttpResponse,
     Responder,
     Scope
 };
-use tera::{Context, Tera};
+use askama::Template;
 use crate::{
     service::post_service::{GetPostQuery, NewPost, PostService},
     util::{get_fmt, ResponseFmt}
 };
-
 
 pub struct PostData {
     service: PostService
@@ -30,7 +29,6 @@ pub fn create() -> Scope {
 #[get("")]
 pub async fn get_post(
     services: web::Data<PostData>,
-    tera: web::Data<Tera>,
     query: web::Query<GetPostQuery>,
     accept: web::Header<Accept>
 ) -> impl Responder {
@@ -38,15 +36,10 @@ pub async fn get_post(
 
     match get_fmt(accept) {
         ResponseFmt::HTML => {
-            let mut context = Context::new();
-            context.insert("id", &post.id);
-            context.insert("title", &post.title);
-            context.insert("content", &post.content);
-
-            match tera.render("post.html", &context) {
-                Ok(rendered) => HttpResponse::Ok()
+            match post.render() {
+                Ok(html) => HttpResponse::Ok()
                     .content_type("text/html; charset=utf-8")
-                    .body(rendered),
+                    .body(html),
                 Err(err) => HttpResponse::InternalServerError()
                     .body(format!("Template error: {}", err)),
             }

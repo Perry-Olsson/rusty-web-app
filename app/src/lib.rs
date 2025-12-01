@@ -3,8 +3,7 @@ mod models;
 mod service;
 mod util;
 
-use actix_web::{get, App, HttpResponse, HttpServer, Responder, web};
-use tera::Tera;
+use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 
 use controllers::post_controller;
 
@@ -16,12 +15,8 @@ async fn hello() -> impl Responder {
 }
 
 pub async fn run() -> std::io::Result<()> {
-
-    let server = HttpServer::new(move || {
-        let tera = Tera::new("app/src/views/**/*.html")
-            .expect("Failed to parse templates");
+    let server = HttpServer::new(|| {
         App::new()
-            .app_data(web::Data::new(tera))
             .service(hello)
             .service(post_controller::create())
     })
