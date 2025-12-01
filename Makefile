@@ -15,7 +15,7 @@ down: ## Stop the development environment
 	docker compose down
 
 build: ## Build the Rust project inside the container
-	docker compose exec reddit-clone cargo build --manifest-path /reddit-clone/Cargo.toml
+	docker compose exec app cargo build --manifest-path /app/Cargo.toml
 
 rebuild: ## Rebuild the Docker image
 	docker compose build
@@ -30,4 +30,4 @@ clean: ## Stop and remove containers, networks, and volumes
 	docker compose down -v
 
 shell: ## Open a shell in the container
-	docker compose exec reddit-clone bash
+	docker compose exec app bash

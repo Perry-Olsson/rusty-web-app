@@ -1,15 +1,15 @@
 services:
-  reddit-clone:
+  app:
     build:
       context: .
       target: dev
       args:
-        APP_NAME: reddit-clone
-    image: reddit-clone
-    container_name: reddit-clone
+        APP_NAME: app
+    image: app
+    container_name: app
     user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
     volumes:
-      - .:/reddit-clone
+      - .:/app
     ports:
       - "8080:8080"
     stdin_open: true

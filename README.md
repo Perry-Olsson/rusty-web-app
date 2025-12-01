@@ -1,4 +1,4 @@
-# Reddit Clone
+# Rusty Web App
 
 A simple web service built with Rust.
 
@@ -56,7 +56,7 @@ docker compose logs -f
 
 **Build the Rust project inside the container:**
 ```bash
-docker compose exec reddit-clone cargo build --manifest-path /reddit-clone/Cargo.toml
+docker compose exec app cargo build --manifest-path /app/Cargo.toml
 ```
 
 **Rebuild the Docker image:**
@@ -74,6 +74,6 @@ docker compose restart
 The old shell scripts in `scripts/` have been replaced with Docker Compose:
 - `scripts/dev.sh` → `docker compose up -d`
 - `scripts/dev.sh down` → `docker compose down`
-- `scripts/build.sh` → `docker compose exec reddit-clone cargo build --manifest-path /reddit-clone/Cargo.toml`
+- `scripts/build.sh` → `docker compose exec app cargo build --manifest-path /app/Cargo.toml`
 
 The scripts can be removed once you've verified the Docker Compose setup works for your workflow.
