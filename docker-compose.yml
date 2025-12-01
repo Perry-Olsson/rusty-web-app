@@ -7,7 +7,6 @@ services:
         APP_NAME: app
     image: app
     container_name: app
-    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
     volumes:
       - .:/app
     ports:

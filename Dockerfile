@@ -1,4 +1,3 @@
-# Build stage
 FROM rust:1.91.1 AS builder
 
 ARG APP_NAME
@@ -6,9 +5,11 @@ FROM builder AS dev
 
 WORKDIR /${APP_NAME}
 
+RUN cargo install cargo-nextest
+
 CMD ["scripts/run.sh"]
 
-FROM builder as runtime-builder
+FROM builder AS runtime-builder
 
 WORKDIR /app
 
