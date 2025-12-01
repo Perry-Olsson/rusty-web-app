@@ -1,4 +1,4 @@
-use actix_web::{get, http::header::{Accept, ContentType, QualityItem}, mime::Mime, post, web::{self, Header}, HttpRequest, HttpResponse, Responder, Scope};
+use actix_web::{get, http::header::{Accept}, post, web::{self}, HttpResponse, Responder, Scope};
 
 use crate::{models::post::Post, service::post_service::{GetPostQuery, NewPost, PostService}, util::{get_fmt, ResponseFmt}};
 
