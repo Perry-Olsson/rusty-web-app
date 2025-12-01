@@ -1,7 +1,17 @@
-use actix_web::{get, http::header::{Accept}, post, web::{self}, HttpResponse, Responder, Scope};
+use actix_web::{
+    get,
+    http::header::Accept,
+    post,
+    web::{self},
+    HttpResponse,
+    Responder,
+    Scope
+};
 use tera::{Context, Tera};
-
-use crate::{models::post::Post, service::post_service::{GetPostQuery, NewPost, PostService}, util::{get_fmt, ResponseFmt}};
+use crate::{
+    service::post_service::{GetPostQuery, NewPost, PostService},
+    util::{get_fmt, ResponseFmt}
+};
 
 
 pub struct PostData {
