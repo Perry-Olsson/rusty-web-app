@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 actix-web = "4"
-serde = "1.0.228"
+serde = { version = "1.0.228", features = ["derive"] }
+tera = "1.20"
