@@ -7,7 +7,9 @@ use actix_web::{
 };
 use askama::Template;
 use serde::Serialize;
-use std::future::{ready, Ready};
+use std::{fs, future::{ready, Ready}};
+
+use crate::models::error::ErrorResponse;
 
 pub enum ResponseFmt {
     HTML,
@@ -50,6 +52,19 @@ pub fn respond_optional<T>(maybe_res: Option<T>, fmt: ResponseFmt) -> HttpRespon
 where T: Serialize + Template {
     match maybe_res {
         Some(res) => respond(res, fmt),
-        None => HttpResponse::NotFound().body("Not found")
+        None => handle_not_found(fmt)
+    }
+}
+
+fn handle_not_found(fmt: ResponseFmt) -> HttpResponse {
+    match fmt {
+        ResponseFmt::HTML => {
+            HttpResponse::NotFound()
+                    .content_type("text/html; charset=utf-8")
+                    .body(fs::read_to_string("/app/public/404.html").unwrap())
+        },
+        ResponseFmt::JSON => {
+            HttpResponse::NotFound().json(ErrorResponse { message: "Resource Not Found".to_string() })
+        },
     }
 }

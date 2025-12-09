@@ -1,7 +1,6 @@
-use serde::Serialize;
+use serde::{Serialize};
 
 #[derive(Serialize)]
-pub struct ErrorResponse<T: Serialize> {
-    message: String,
-    detail: Option<T>
+pub struct ErrorResponse {
+    pub message: String,
 }
