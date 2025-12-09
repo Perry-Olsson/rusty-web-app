@@ -20,15 +20,18 @@ impl PostService {
         }
 
         Ok(Post {
-            id: Id::new(),
+            id: Id::new(5),
             title: new_post.title,
             content: new_post.content,
         })
     }
 
-    pub fn get_post(&self, query: &GetPostQuery) -> Post {
+    pub fn get_post(&self, query: GetPostRequest) -> Option<Post> {
+        if query.id != 5 {
+            return None;
+        }
         let mut post = Post {
-            id: Id::new(),
+            id: Id::new(5),
             title: "My First Post".to_string(),
             content: "This is some dummy content for the post.".to_string(),
         };
@@ -37,7 +40,7 @@ impl PostService {
             post.title = post.title.to_uppercase();
         }
 
-        post
+        Some(post)
     }
 }
 
@@ -48,8 +51,9 @@ pub struct NewPost {
 }
 
 #[derive(Deserialize)]
-pub struct GetPostQuery {
-    upper: Option<bool>,
+pub struct GetPostRequest {
+    pub id: Id,
+    pub upper: Option<bool>,
 }
 
 #[cfg(test)]
@@ -58,8 +62,11 @@ mod tests {
 
     #[test]
     fn test_get_post_default() {
-        let query = GetPostQuery { upper: None };
-        let post = PostService::new().get_post(&query);
+        let query = GetPostRequest { 
+            id: Id::new(5),
+            upper: None 
+        };
+        let post = PostService::new().get_post(query).unwrap();
 
         assert_eq!(post.title, "My First Post");
         assert_eq!(post.content, "This is some dummy content for the post.");
@@ -67,8 +74,11 @@ mod tests {
 
     #[test]
     fn test_get_post_upper_false() {
-        let query = GetPostQuery { upper: Some(false) };
-        let post = PostService::new().get_post(&query);
+        let query = GetPostRequest { 
+            id: Id::new(5),
+            upper: Some(false) 
+        };
+        let post = PostService::new().get_post(query).unwrap();
 
         assert_eq!(post.title, "My First Post");
         assert_eq!(post.content, "This is some dummy content for the post.");
@@ -76,11 +86,24 @@ mod tests {
 
     #[test]
     fn test_get_post_upper_true() {
-        let query = GetPostQuery { upper: Some(true) };
-        let post = PostService::new().get_post(&query);
+        let query = GetPostRequest { 
+            id: Id::new(5),
+            upper: Some(true) 
+        };
+        let post = PostService::new().get_post(query).unwrap();
 
         assert_eq!(post.title, "MY FIRST POST");
         assert_eq!(post.content, "This is some dummy content for the post.");
+    }
+
+    #[test]
+    fn test_get_non_existent_post() {
+        let query = GetPostRequest { 
+            id: Id::new(6),
+            upper: None 
+        };
+        let post = PostService::new().get_post(query);
+        assert!(post.is_none())
     }
 
     #[test]

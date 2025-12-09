@@ -2,7 +2,8 @@ use actix_web::{
     dev::Payload,
     http::header,
     FromRequest,
-    HttpRequest, HttpResponse, Responder,
+    HttpRequest, 
+    HttpResponse
 };
 use askama::Template;
 use serde::Serialize;
@@ -27,7 +28,7 @@ impl FromRequest for ResponseFmt {
     }
 }
 
-pub fn send_response<T>(res: T, fmt: ResponseFmt) -> impl Responder 
+pub fn respond<T>(res: T, fmt: ResponseFmt) -> HttpResponse 
 where T: Serialize + Template {
     match fmt {
         ResponseFmt::HTML => {
@@ -42,5 +43,13 @@ where T: Serialize + Template {
         ResponseFmt::JSON => {
             HttpResponse::Ok().json(res)
         },
+    }
+}
+
+pub fn respond_optional<T>(maybe_res: Option<T>, fmt: ResponseFmt) -> HttpResponse
+where T: Serialize + Template {
+    match maybe_res {
+        Some(res) => respond(res, fmt),
+        None => HttpResponse::NotFound().body("Not found")
     }
 }

@@ -6,9 +6,9 @@ use actix_web::{
     Responder,
     Scope
 };
+use serde::Deserialize;
 use crate::{
-    service::post_service::{GetPostQuery, NewPost, PostService},
-    util::{send_response, ResponseFmt}
+    models::id::Id, service::post_service::{GetPostRequest, NewPost, PostService}, util::{respond_optional, ResponseFmt}
 };
 
 pub struct PostData {
@@ -24,15 +24,26 @@ pub fn create() -> Scope {
             .service(create_post)
 }
 
-#[get("")]
+#[get("/{id}")]
 pub async fn get_post(
     services: web::Data<PostData>,
+    path: web::Path<Id>,
     query: web::Query<GetPostQuery>,
     fmt: ResponseFmt,
 ) -> impl Responder {
-    let post = services.service.get_post(&query);
+    let maybe_post = services.service.get_post(
+        GetPostRequest {
+            id: path.into_inner(),
+            upper: query.upper
+        }
+        );
 
-    send_response(post, fmt)
+    respond_optional(maybe_post, fmt)
+}
+
+#[derive(Deserialize)]
+struct GetPostQuery {
+    upper: Option<bool>,
 }
 
 #[post("")]

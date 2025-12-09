@@ -1,25 +1,25 @@
-use std::fmt::{Debug, Display};
+use std::{fmt::{Debug, Display}};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub struct Id {
-    val: u64
+    id: u64
 }
 
 impl Debug for Id {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.serialize_u64(self.val)
+        f.serialize_u64(self.id)
     }
 }
 
 impl Display for Id {
    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-       f.serialize_u64(self.val)
+       f.serialize_u64(self.id)
     }
 }
 
 impl Id {
-    pub fn new() -> Id {
-        Id { val: 1 }
+    pub fn new(num: u64) -> Id {
+        Id { id: num }
     }
 }
 
@@ -28,7 +28,7 @@ impl Serialize for Id {
     where
         S: Serializer,
     {
-        serializer.serialize_u64(self.val)
+        serializer.serialize_u64(self.id)
     }
 }
 
@@ -38,6 +38,12 @@ impl<'de> Deserialize<'de> for Id {
         D: Deserializer<'de>,
     {
         let val = u64::deserialize(deserializer)?;
-        Ok(Id { val })
+        Ok(Id { id: val })
+    }
+}
+
+impl PartialEq<u64> for Id {
+    fn eq(&self, other: &u64) -> bool {
+        self.id == *other
     }
 }
