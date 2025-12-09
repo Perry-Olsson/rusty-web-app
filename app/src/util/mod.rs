@@ -1,13 +1,13 @@
 use actix_web::{
-    dev::Payload,
-    http::header,
+    dev::{Payload},
+    http::{header},
     FromRequest,
     HttpRequest, 
-    HttpResponse
+    HttpResponse 
 };
 use askama::Template;
 use serde::Serialize;
-use std::{fs, future::{ready, Ready}};
+use std::{future::{ready, Ready}};
 
 use crate::models::error::ErrorResponse;
 
@@ -56,12 +56,15 @@ where T: Serialize + Template {
     }
 }
 
+// TODO find a solid solution for serving these static files as is.
+#[derive(Template)]
+#[template(path = "errors/404.html")]
+pub struct NotFound;
+
 fn handle_not_found(fmt: ResponseFmt) -> HttpResponse {
     match fmt {
         ResponseFmt::HTML => {
-            HttpResponse::NotFound()
-                    .content_type("text/html; charset=utf-8")
-                    .body(fs::read_to_string("/app/public/404.html").unwrap())
+            HttpResponse::NotFound().body(NotFound{}.render().unwrap())
         },
         ResponseFmt::JSON => {
             HttpResponse::NotFound().json(ErrorResponse { message: "Resource Not Found".to_string() })

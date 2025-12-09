@@ -1,10 +1,5 @@
 use actix_web::{
-    get,
-    post,
-    web::{self},
-    HttpResponse,
-    Responder,
-    Scope
+    get, post, web::{self}, HttpResponse, Responder, Scope
 };
 use serde::Deserialize;
 use crate::{
