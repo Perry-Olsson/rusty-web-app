@@ -3,7 +3,7 @@ use actix_web::{
 };
 use serde::Deserialize;
 use crate::{
-    models::id::Id, service::post_service::{GetPostRequest, NewPost, PostService}, util::{respond_optional, ResponseFmt}
+    models::id::Id, service::post_service::{GetPostRequest, NewPost, PostService}, util::{respond_optional, ContentType}
 };
 
 pub struct PostData {
@@ -24,7 +24,7 @@ pub async fn get_post(
     services: web::Data<PostData>,
     path: web::Path<Id>,
     query: web::Query<GetPostQuery>,
-    fmt: ResponseFmt,
+    fmt: ContentType,
 ) -> impl Responder {
     let maybe_post = services.service.get_post(
         GetPostRequest {

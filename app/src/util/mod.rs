@@ -11,29 +11,29 @@ use std::{future::{ready, Ready}};
 
 use crate::models::error::ErrorResponse;
 
-pub enum ResponseFmt {
+pub enum ContentType {
     HTML,
     JSON
 }
 
-impl FromRequest for ResponseFmt {
+impl FromRequest for ContentType {
     type Error = actix_web::Error;
     type Future = Ready<Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
         let accept = req.headers().get(header::ACCEPT);
         let fmt = match accept.and_then(|h| h.to_str().ok()) {
-            Some(s) if s.contains("application/json") => ResponseFmt::JSON,
-            _ => ResponseFmt::HTML,
+            Some(s) if s.contains("application/json") => ContentType::JSON,
+            _ => ContentType::HTML,
         };
         ready(Ok(fmt))
     }
 }
 
-pub fn respond<T>(res: T, fmt: ResponseFmt) -> HttpResponse 
+pub fn respond<T>(res: T, fmt: ContentType) -> HttpResponse 
 where T: Serialize + Template {
     match fmt {
-        ResponseFmt::HTML => {
+        ContentType::HTML => {
             match res.render() {
                 Ok(html) => HttpResponse::Ok()
                     .content_type("text/html; charset=utf-8")
@@ -42,13 +42,13 @@ where T: Serialize + Template {
                     .body(format!("Template error: {}", err)),
             }
         },
-        ResponseFmt::JSON => {
+        ContentType::JSON => {
             HttpResponse::Ok().json(res)
         },
     }
 }
 
-pub fn respond_optional<T>(maybe_res: Option<T>, fmt: ResponseFmt) -> HttpResponse
+pub fn respond_optional<T>(maybe_res: Option<T>, fmt: ContentType) -> HttpResponse
 where T: Serialize + Template {
     match maybe_res {
         Some(res) => respond(res, fmt),
@@ -61,12 +61,12 @@ where T: Serialize + Template {
 #[template(path = "errors/404.html")]
 pub struct NotFound;
 
-fn handle_not_found(fmt: ResponseFmt) -> HttpResponse {
+fn handle_not_found(fmt: ContentType) -> HttpResponse {
     match fmt {
-        ResponseFmt::HTML => {
+        ContentType::HTML => {
             HttpResponse::NotFound().body(NotFound{}.render().unwrap())
         },
-        ResponseFmt::JSON => {
+        ContentType::JSON => {
             HttpResponse::NotFound().json(ErrorResponse { message: "Resource Not Found".to_string() })
         },
     }
