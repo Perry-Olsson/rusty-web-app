@@ -1,9 +1,9 @@
 use actix_web::{
-    get, post, web::{self}, HttpResponse, Responder, Scope
+    get, http::header, post, web::{self}, HttpResponse, Responder, Scope
 };
 use serde::Deserialize;
 use crate::{
-    models::id::Id, service::post_service::{GetPostRequest, NewPost, PostService}, util::{respond_optional, ContentType}
+    models::id::Id, service::post_service::{GetPostRequest, NewPost, PostService}, util::{respond_optional}
 };
 
 pub struct PostData {
@@ -24,7 +24,7 @@ pub async fn get_post(
     services: web::Data<PostData>,
     path: web::Path<Id>,
     query: web::Query<GetPostQuery>,
-    fmt: ContentType,
+    accept: web::Header<header::Accept>,
 ) -> impl Responder {
     let maybe_post = services.service.get_post(
         GetPostRequest {
@@ -33,7 +33,7 @@ pub async fn get_post(
         }
         );
 
-    respond_optional(maybe_post, fmt)
+    respond_optional(maybe_post, accept)
 }
 
 #[derive(Deserialize)]
