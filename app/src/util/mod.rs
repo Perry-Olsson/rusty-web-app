@@ -21,6 +21,7 @@ where T: Serialize + Template {
     })
 }
 
+#[allow(dead_code)]
 pub fn respond<T>(res: T, accept: Header<Accept>) -> HttpResponse 
 where T: Serialize + Template {
     handle_unsupported_content_type(accept, |content_type| {
@@ -76,9 +77,9 @@ fn get_content_type(accept: web::Header<header::Accept>) -> Option<ContentType> 
 #[template(path = "errors/404.html")]
 pub struct NotFound;
 
-#[derive(Template)]
+/* #[derive(Template)]
 #[template(path = "errors/406-unsupported-browser.html")]
-pub struct NotAcceptable;
+pub struct NotAcceptable; */
 
 fn handle_not_found(content_type: ContentType) -> HttpResponse {
     match content_type {
